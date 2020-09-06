@@ -1,0 +1,304 @@
+// Constantes diverses
+const toast_timer = 2000;																			// Temps d'affichage de la notification (en secondes)
+
+const article_erreur_key = 'Erreur';																// Texte renvoyé lors de l'erreur de requête
+const article_erreur_texte = 'Une erreur est survenue';												// Texte affiché lors de l'erreur de requête
+
+const panier_vide = 'Panier vide';																	// Texte affiché lorsque de la panier est vide
+
+// Ajout d'un item
+const article_ajout_texte = 'Article ajouté'														// Texte affiché lors de l'ajout d'un article
+
+// Modifier un item
+const article_modification_texte = 'Article modifié';												// Texte affiché lors de la modification d'un article
+
+// Supprimer un item
+const article_suppression_texte = 'Article supprimé';												// Texte affiché lors de la suppresion d'un article
+
+// Tri de la boutique
+const boutique_tri_texte = 'Boutique triée';														// Texte affiché lors du tri de la boutique
+
+
+
+/*
+*	-----
+*	GESTION DU PANIER
+*	-----
+*/
+
+
+/*
+*	Ajout d'un item
+*/
+
+// Traite le résultat de la requête
+function ajoutItemPanier_callback(responseText)
+{
+	// Si une erreur survient
+	if(responseText === article_erreur_key)
+	{
+		// Boîte de dialogue
+		Materialize.toast(article_erreur_texte, toast_timer);
+	}
+	// Si l'article a été ajoutée, on actualise le panier
+	else {
+		// On affiche le nouveau panier
+		window.document.querySelector("#form_panier").innerHTML = responseText;
+		// On réecrit les événements JS
+		gestion_evenements();
+
+		// On affiche la notification
+		Materialize.toast(article_ajout_texte, toast_timer);
+	}
+}
+
+// Gère l'ajout dans le panier
+function ajoutItemPanier(event)
+{
+	// On récupère l'id de l'item
+	var item = new Array();
+	item['id_item'] = event.target.elements['id_item'].value;
+
+	// On tente l'ajout dans le panier
+	if (requeteAjax(page_requete, "POST", "panier", "ajouter_item", item, ajoutItemPanier_callback))
+	{
+		// On annule l'envoi du formulaire si réussie
+		event.preventDefault();
+	}
+}
+
+
+/*
+*	Modification des quantités
+*/
+
+// Traite le résultat de la requête
+function modifieItemPanier_callback(responseText)
+{
+	// Si une erreur survient
+	if(responseText === article_erreur_key)
+	{
+		// Boîte de dialogue
+		Materialize.toast(article_erreur_texte, toast_timer);
+	}
+	// Si l'article a été modifié, on actualise le panier
+	else {
+		// On refresh seulement lorsqu'un item est supprimé
+		if(responseText.split('<div class="row">').length !== window.document.querySelector("#form_panier").innerHTML.split('<div class="row">').length)
+		{
+			// On affiche le nouveau panier
+			window.document.querySelector("#form_panier").innerHTML = responseText;
+			// On réecrit les événements JS
+			gestion_evenements();
+		}
+
+		// On affiche la notification
+		Materialize.toast(article_modification_texte, toast_timer);
+	}
+}
+
+// Gère la modification de la quantité d'un item dans le panier
+function modifieItemPanier(event)
+{
+	/* Calcul du nouveau prix de l'item */
+
+	// On récupère l'id de l'item modifié
+	var id_item = event.target.id.substring(12);
+	// On récupère le prix unitaire de l'item
+	var prix_unitaire_item = document.querySelector("#prix_unitaire_id_item_"+id_item).innerHTML;
+	// On récupère l'élement prix associé à l'id_item
+	var prix_item = window.document.querySelector("#prix_id_item_"+id_item);
+	// On calcule le nouveau prix
+	prix_item.innerHTML = (parseFloat(prix_unitaire_item)*parseInt(event.target.value)).toFixed(2);
+
+
+	// On récupère la quantité de l'item
+	var item = new Array();
+	item[event.target.name] = event.target.value;
+
+	// On tente l'envoi la requête de modification
+	if (requeteAjax(page_requete, "POST", "panier", "modifier_items", item, modifieItemPanier_callback))
+	{
+		// On annule l'envoi du formulaire si réussie
+		event.preventDefault();
+	}
+}
+
+
+/*
+*	Suppresion d'un item
+*/
+
+// Traite le résultat de la requête
+function supprimeItemPanier_callback(responseText)
+{
+	// Si une erreur survient
+	if(responseText === article_erreur_key)
+	{
+		// Boîte de dialogue
+		Materialize.toast(article_erreur_texte, toast_timer);
+	}
+	// Si l'article a été supprimé, on actualise le panier
+	else {
+		// On affiche le nouveau panier
+		window.document.querySelector("#form_panier").innerHTML = responseText;
+		// On réecrit les événements JS
+		gestion_evenements();
+
+		// On affiche la notification
+		Materialize.toast(article_suppression_texte, toast_timer);
+	}
+}
+
+// Gère l'ajout dans le panier
+function supprimeItemPanier(event)
+{
+	// On récupère l'id de l'item
+	var boxes = window.document.querySelectorAll("input[id^='box_id_item_']");
+	// On vérifie que le panier ne soit pas vide
+	if(boxes.length <= 0)
+	{
+		// On affiche la notification
+		Materialize.toast(panier_vide_texte, toast_timer);
+		return;
+	}
+
+	var items = new Array();
+	// On enregistre chaque checkbox
+	for(var i = 0; i < boxes.length; i++)
+	{
+		items[boxes[i].id] = (boxes[i].checked) ? 'on' : 'off';
+	}
+
+	// On tente la suppression dans le panier
+	if (requeteAjax(page_requete, "POST", "panier", "supprimer_item", items, supprimeItemPanier_callback))
+	{
+		// On annule l'envoi du formulaire si réussie
+		event.preventDefault();
+	}
+}
+
+
+
+
+
+/*
+*	-----
+*	GESTION DE LA BOUTIQUE
+*	-----
+*/
+
+// Traite le résultat de la requête
+function triBoutique_callback(responseText)
+{
+	// Si une erreur survient
+	if(responseText === article_erreur_key)
+	{
+		// Boîte de dialogue
+		Materialize.toast(article_erreur_texte, toast_timer);
+	}
+	else
+	{
+		// On affiche la nouvelle boutique
+		window.document.querySelector("#boutique").innerHTML = responseText;
+		// On réecrit les événements JS
+		gestion_evenements();
+
+		// On affiche la notification
+		Materialize.toast(boutique_tri_texte, toast_timer);
+	}
+}
+
+// Gère le tri de la boutique
+function triBoutique(event)
+{	
+	// Si ce type de tri a déjà été effectué
+	if(event.currentTarget.classList.contains("disabled") || (event.currentTarget.classList.contains("active") && !event.currentTarget.classList.contains("pagination_boutique_ordre")))
+	{
+		// On annule l'événement
+		event.preventDefault();
+		return;
+	}
+
+	var params = new Array();
+	// On récupère les paramètres tri et ordre
+	params['tri'] = event.currentTarget.children[0].href.split("tri=")[1].split("&ordre=")[0];
+	params['ordre'] = event.currentTarget.children[0].href.split("ordre=")[1];
+	params['ordre'] = (params['ordre'] === undefined ? 0 : params['ordre']);
+
+	// On tente de recharger la boutique
+	if (requeteAjax(page_requete, "POST", "boutique", "tri", params, triBoutique_callback))
+	{
+		// On annule l'envoi du formulaire si réussie
+		event.preventDefault();
+	}
+}
+
+
+
+// Réécriture des événements formulaires
+function gestion_evenements()
+{
+	/*
+	*	"Modifier"
+	*/
+
+	// On cache le bouton "#btn_modifier_items" puisque l'événement se gère différemment
+	var btn_modifier_items = window.document.querySelector("#btn_modifier_items");
+	if(btn_modifier_items !== undefined && btn_modifier_items !== null)
+	{
+		btn_modifier_items.style.display = 'none'
+	}
+
+	// "modifier_items" sur les champs "number"
+	var champs_quantite = window.document.querySelectorAll("input[id^='num_id_item_']");
+	// Pour chaque formulaire, on override l'événement "submit"
+	for(var i = 0; i < champs_quantite.length; i++)
+	{
+		champs_quantite[i].addEventListener("change", modifieItemPanier, false);
+	}
+
+
+	/*
+	*	"Ajouter"
+	*/
+
+	// On modifie tous les formulaires d'item
+	var items = window.document.querySelectorAll(".form_item");
+
+	// Pour chaque formulaire, on override l'événement "submit"
+	for(var i = 0; i < items.length; i++)
+	{
+		items[i].addEventListener("submit", ajoutItemPanier, false);
+	}
+
+
+	/*
+	*	"Supprimer"
+	*/
+
+	// On ajoute un événement au submit
+	var btn_supprimer_item = window.document.querySelector("#btn_supprimer_item");
+	if(btn_supprimer_item !== undefined && btn_supprimer_item !== null)
+	{
+		btn_supprimer_item.addEventListener("click", supprimeItemPanier, false)
+	}
+
+
+	/*
+	*	"Tri Boutique"
+	*/
+	var paginations = window.document.querySelectorAll(".pagination_boutique");
+
+	for(var i = 0; i < paginations.length; i++)
+	{
+		paginations[i].addEventListener("click", triBoutique, false);
+	}
+}
+
+
+
+// Au chargement de la page, on réécrit les événéments des formulaires
+window.addEventListener("load", function() {
+	gestion_evenements();
+}, false);

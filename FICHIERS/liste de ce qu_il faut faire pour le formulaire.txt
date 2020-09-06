@@ -1,0 +1,18 @@
+Objectif : Création d'un compte à valider par l'utilisateur par mail
+
+PARTIE HTML Il faut que :
+	-regex pour l'email et le tel voir http://blog.1formatik.com/regex-numero-telephone-pattern-php
+PARTIE PHP Il faut que
+	-les champs ne sois pas vides
+	-on filtre tout avec : https://openclassrooms.com/courses/les-filtres-en-php-pour-valider-les-donnees-utilisateur
+	-l'email et email confirm sois pareil
+	-pass et pass confirm sois pareil
+	-Re verif email ( avec verif dans le php avec if (preg_match("#^[a-z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$#", $_POST['mail']))
+		*SI TOUT LES PRECEDENT BON on n'affiche plus le formulaire
+	-Connexion à la bdd verif si l'utilisateur existe déjà
+		*SI OUI on affiche que l'utilisateur dont l'adresse email est ... existe deja, veuillez vous connecter ici.
+		*SI NON on créer un nouvel utilisateur avec les bonnes infos, et dans active on met 0 car le compte n'est pas encore confirmé.
+	-Gestion de confirmation du compte par mail	voir ici http://m-gut.developpez.com/tutoriels/php/mail-confirmation/
+
+
+ENREGISTER EMAIL EN MINISCULE

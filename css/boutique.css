@@ -1,0 +1,30 @@
+/* Image d'un tem */
+.image-item {
+	/* TODO: Changer la couleur de la bordure par la $primary_color */
+	border: black solid 2px;
+
+	/* Bords arrondis */
+	-webkit-border-radius: 30px;
+	border-radius: 30px;
+	-moz-border-radius: 30px;
+
+	/* Taille de l'image */
+	height: 180px;
+	width: 180px;
+}
+
+.normal_label {
+	/* On formate le texte */
+	font-size: 100%;
+	color: black;
+}
+
+.quantite {
+	/* On centre verticalement par rapport aux autres champs */
+	margin-top: -15px;
+}
+
+.a_supprimer {
+	/* Décalage de la checkbox */
+	margin-left: 18px;
+}

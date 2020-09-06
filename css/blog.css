@@ -1,0 +1,63 @@
+
+#liste_comment{
+	opacity:0.5;
+}
+
+.comment-header{
+	/*text-shadow: 3px 2px red;*/
+	font-size: 1.5em;
+	
+}
+.article-header{
+	/*text-shadow: 3px 2px red;*/
+	font-size: 1.5em;
+	opacity:0.5;
+	
+}
+.comment-body{
+	
+
+}
+.date{
+	
+	font-size: 0.5em;
+}
+.pseudo{
+	color:black;
+}
+a {
+  color:inherit;
+  text-decoration: none;
+ }
+
+ #new_post{
+  	position: fixed; 
+ 	margin-left: 1.5%;
+ 	top: 100px;
+
+ }
+ .collapsible-body{
+ 	padding : 0;
+ 	margin-top : -8px;
+ }
+ .row.element{margin-bottom: -16px;}
+
+textarea {
+    resize: none;
+}
+
+.test{
+     vertical-align:middle;
+
+}
+.wordwrap{
+	word-wrap : break-word; 
+}
+
+.valide{
+	color:green;
+}
+
+.invalide{
+	color:red;
+}
