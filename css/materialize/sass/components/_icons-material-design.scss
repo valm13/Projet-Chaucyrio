@@ -1,0 +1,18 @@
+/* This is needed for some mobile phones to display the Google Icon font properly */
+.material-icons {
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
+}
+
+
+/* On modifie la couleur des material-icons qui ne sont pas dans des boutons */
+.material-icons {
+	color: $secondary-color;
+}
+nav li .material-icons, button .material-icons, .force-icons {
+	color: white !important;
+}
+
+.article-blog {
+	background-color: $primary-color !important;
+}
